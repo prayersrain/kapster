@@ -1,7 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import net from 'node:net';
 const commands = [
-  ['node_modules/next/dist/bin/next', 'dev', '--hostname', '127.0.0.1'],
+  ['node_modules/next/dist/bin/next', 'dev', '--hostname', '127.0.0.1', '--port', '3000'],
   ['node_modules/vite/bin/vite.js', '--config', 'apps/web/vite.config.ts'],
   ['apps/api/dist/main.js'],
 ];
@@ -20,7 +20,9 @@ await new Promise((resolve, reject) => {
   });
   child.on('exit', (code) => (code === 0 ? resolve() : reject(new Error('Build API gagal'))));
 });
-const children = commands.map((args) => spawn(process.execPath, args, { stdio: 'inherit' }));
+// Port tetap 3000/4000/5173; PORT dari luar (mis. tool preview) tidak boleh menggeser Next atau API.
+const env = { ...process.env, PORT: '4000' };
+const children = commands.map((args) => spawn(process.execPath, args, { stdio: 'inherit', env }));
 let stopping = false;
 function stop(code = 0) {
   if (stopping) return;

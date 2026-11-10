@@ -14,7 +14,10 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:5173',
     headless: true,
     viewport: { width: 1440, height: 950 },
-    launchOptions: { executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' },
+    // Google Chrome terpasang di lokasi standar Windows/macOS/Linux; CHROME_PATH untuk lokasi lain.
+    ...(process.env.CHROME_PATH
+      ? { launchOptions: { executablePath: process.env.CHROME_PATH } }
+      : { channel: 'chrome' }),
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },
